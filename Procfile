@@ -1,1 +1,1 @@
-python bot_classtask.py
+worker: python bot_classtask.py
