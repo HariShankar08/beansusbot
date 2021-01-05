@@ -5,6 +5,7 @@ import asyncio
 import pickle
 import random
 
+
 with open("auth.pkl", "rb") as file:
     token = pickle.load(file)
 
@@ -53,9 +54,7 @@ class Game:
         self.discuss = False
         self.can_vote = False
         self.voted = []
-        self.temptask = dict.fromkeys(
-            ['filter', 'enter_id', 'ali_eng', 'wires', 'emp', 'power', 'scan_card', 'sample', 'shields', 'steer',
-             'fuel', 'reac_start'], [])
+        self.temptask = dict.fromkeys(['filter','enter_id','ali_eng','wires','emp','power','scan_card','sample','shields','steer','fuel','reac_start'],[])
         self.tasking = {}
         self.taskdisp = {}
         self.total = 0
@@ -69,16 +68,16 @@ class Game:
             '!m (tile number)': 'Move to the tile as per the map',
             '!em': 'Call an emergency meeting',
             '!v': 'Vent (If you can)',
-            '!v up': 'Get out of a vent(If you\'re in one)',
-            '!v (tile number)': 'Move to the vent tile as per map',
-            '!rep': 'Report a dead body',
-            '!vo (nickname)': 'Vote for a person in meetings',
-            '!vo skip': 'Skip voting',
-            '!k': 'Kill (If you are an impostor)',
-            '!my_tasks': 'Shows your tasks for the game',
-            '!taskstat': 'Shows task completion status',
-            '!tasks': 'Shows task details'
-        }
+            '!v up' : 'Get out of a vent(If you\'re in one)',
+            '!v (tile number)' : 'Move to the vent tile as per map',
+            '!rep' : 'Report a dead body',
+            '!vo (nickname)' : 'Vote for a person in meetings',
+            '!vo skip' : 'Skip voting',
+            '!k' : 'Kill (If you are an impostor)',
+            '!my_tasks' : 'Shows your tasks for the game',
+            '!taskstat' : 'Shows task completion status',
+            '!tasks' : 'Shows task details'
+            }
         self.task_commands = {
             '!med_scan': 'Do the medical scan task.(in MedBay)',
             '!ali_eng': 'Align engine task.(in Engines)',
@@ -86,7 +85,7 @@ class Game:
             '!emp': 'Empty the garbage chute.(in Cafe and Storage)',
             '!upload': 'Upload data.(in Navigation and Admin)',
             '!download': 'Download data.(in Comm and Shields)',
-            '!power': 'Divert power.(in Comm and Security)',
+            '!power':'Divert power.(in Comm and Security)',
             '!enterid': 'Enter the Id code.(in Weapons and Admin)',
             '!reactor-start': 'Start the reactor.(in Reactor)',
             '!fuel': 'Collect fuel and empty it into the engine.(in Engines)',
@@ -94,9 +93,8 @@ class Game:
             '!shields': 'The shields priming task.(in Shields)',
             '!sample': 'Inspect samples.(in Medbay)',
             '!scan-card': 'Scan boarding pass(in Weapons and Security)',
-            '!filter': 'Clean the O2 filters(in O2)'
-        }
-
+            '!filter' : 'Clean the O2 filters(in O2)'
+            }
 
 @bot.command()
 async def help(ctx):
@@ -105,14 +103,12 @@ async def help(ctx):
     del gm
     await ctx.send(embed=embed)
 
-
 @bot.command()
 async def tasks(ctx):
     gm = Game()
     embed = await make_embed('Tasks', 'List of available Tasks and  their Commands', gm.task_commands)
     del gm
     await ctx.send(embed=embed)
-
 
 @bot.command()
 async def game(ctx, *args):
@@ -122,9 +118,8 @@ async def game(ctx, *args):
             this_game = Game()
             n_players = 2
             code = str(round(random.random() * 1000))
-            await ctx.guild.create_role(name=f"IN GAME {code}", colour=discord.Color.red())
-            await ctx.channel.set_permissions(discord.utils.get(ctx.guild.roles, name=f'IN GAME {code}'),
-                                              send_messages=False, read_messages=False)
+            await ctx.guild.create_role(name=f"IN GAME {code}",colour = discord.Color.red())
+            await ctx.channel.set_permissions(discord.utils.get(ctx.guild.roles, name=f'IN GAME {code}'), send_messages=False, read_messages = False)
         else:
             try:
                 n_players = int(args[0])
@@ -134,14 +129,12 @@ async def game(ctx, *args):
             this_game = Game(n_players=n_players)
             try:
                 code = args[1]
-                await ctx.guild.create_role(name=f"IN GAME {code}", colour=discord.Color.red())
-                await ctx.channel.set_permissions(discord.utils.get(ctx.guild.roles, name=f'IN GAME {code}'),
-                                                  send_messages=False, read_messages=False)
+                await ctx.guild.create_role(name=f"IN GAME {code}",colour = discord.Color.red())
+                await ctx.channel.set_permissions(discord.utils.get(ctx.guild.roles, name=f'IN GAME {code}'), send_messages=False, read_messages = False)
             except IndexError:
                 code = str(round(random.random() * 1000))
-                await ctx.guild.create_role(name=f"IN GAME {code}", colour=discord.Color.red())
-                await ctx.channel.set_permissions(discord.utils.get(ctx.guild.roles, name=f'IN GAME {code}'),
-                                                  send_messages=False, read_messages=False)
+                await ctx.guild.create_role(name=f"IN GAME {code}",colour = discord.Color.red())
+                await ctx.channel.set_permissions(discord.utils.get(ctx.guild.roles, name=f'IN GAME {code}'), send_messages=False, read_messages = False)
         g_id = ctx.message.guild.id
         if g_id in games.keys():
             if len(games[g_id]) >= 2:
@@ -191,25 +184,23 @@ async def which(ctx):
     else:
         await ctx.send(f'You aren\'t in a game yet, {ctx.message.author}.')
 
-
 @bot.command()
 async def my_tasks(ctx):
     if ctx.message.author in in_a_game:
         g_id, u_id = tuple(in_a_game[ctx.message.author])
         gm = games[g_id][u_id]
-        white_square, tick_mark = '\U00002B1C', '✅'
+        white_square, tick_mark =  '\U00002B1C', '✅'
         try:
-            for k, v in gm.tasking[ctx.message.author].items():
-                if v:
-                    gm.taskdisp[ctx.message.author][k] = white_square
-                else:
-                    gm.taskdisp[ctx.message.author][k] = tick_mark
+            for k,v in gm.tasking[ctx.message.author].items():
+                    if v:
+                        gm.taskdisp[ctx.message.author][k] = white_square
+                    else:
+                        gm.taskdisp[ctx.message.author][k] = tick_mark
             await ctx.message.author.send(str(gm.taskdisp[ctx.message.author]))
         except KeyError:
             await ctx.send("You're an impostor! Can't do tasks")
     else:
         await ctx.send('You\'re not even in a game, {}'.format(ctx.message.author))
-
 
 @bot.command()
 async def taskstat(ctx):
@@ -223,13 +214,12 @@ async def taskstat(ctx):
                     if not v:
                         tasks_done += 1
         if not gm.total == 0:
-            percent = int((tasks_done / gm.total) * 100)
+            percent = int((tasks_done/gm.total) * 100)
         else:
             await ctx.message.author.send("No tasks assigned")
         await ctx.message.author.send(str(percent) + '% completed')
     else:
         await ctx.send('You\'re not even in a game, {}'.format(ctx.message.author))
-
 
 @bot.command()
 async def nick(ctx, *args):
@@ -251,7 +241,7 @@ async def nick(ctx, *args):
                 await ctx.send('Ok, nickname set.')
                 await putback_game(gm, ctx.message.author)
                 u_id = in_a_game[ctx.message.author][1]
-                await ctx.message.author.add_roles(discord.utils.get(guild.roles, name=f"IN GAME {u_id}"))
+                await ctx.message.author.add_roles(discord.utils.get(guild.roles,name=f"IN GAME {u_id}"))
                 if len(gm.players) == len(gm.player_colours) == gm.n_players:
                     await ctx.send('Alright, starting game.')
                     await start_game(gm)
@@ -280,7 +270,10 @@ async def reset(ctx, u_id):
             role = discord.utils.get(guild.roles, name=f"IN GAME {u_id}")
             for player in gm.players:
                 await player.send(f'Game has been reset by {ctx.message.author}')
-                await map.unpin()
+                try:
+                    await map.unpin()
+                except:
+                    pass
                 await player.remove_roles(role)
                 del in_a_game[player]
 
@@ -304,7 +297,7 @@ async def m(ctx, tile):
 
 
 @bot.command()
-async def v(ctx, tile='default'):
+async def v(ctx,tile = 'default'):
     try:
         tile = int(tile)
         if ctx.message.author in in_a_game:
@@ -315,7 +308,7 @@ async def v(ctx, tile='default'):
             await ctx.send('You\'re not even in a game, {}'.format(ctx.message.author))
     except ValueError:
         if str(tile) == 'up':
-            # Now tile stores 'up'
+            #Now tile stores 'up'
             tile = str(tile)
             if ctx.message.author in in_a_game:
                 g_id, u_id = tuple(in_a_game[ctx.message.author])
@@ -324,7 +317,7 @@ async def v(ctx, tile='default'):
             else:
                 await ctx.send('You\'re not even in a game, {}'.format(ctx.message.author))
         elif str(tile) == 'default':
-            # Now tile stores 'default'
+            #Now tile stores 'default'
             tile = str(tile)
             if ctx.message.author in in_a_game:
                 g_id, u_id = tuple(in_a_game[ctx.message.author])
@@ -335,46 +328,42 @@ async def v(ctx, tile='default'):
         else:
             await ctx.send('I\'m just going to pretend nothing was wrong there...')
 
-
 @bot.command()
 async def k(ctx):
-    try:
-        if ctx.message.author in in_a_game:
-            g_id, u_id = tuple(in_a_game[ctx.message.author])
-            gm = games[g_id][u_id]
-            await killing(gm, ctx.message.author)
-        else:
-            await ctx.send('You\'re not even in a game, {}'.format(ctx.message.author))
-    except ValueError:
-        await ctx.send('I\'m just going to pretend nothing was wrong there...')
-
+     try:
+         if ctx.message.author in in_a_game:
+             g_id, u_id = tuple(in_a_game[ctx.message.author])
+             gm = games[g_id][u_id]
+             await killing(gm, ctx.message.author)
+         else:
+             await ctx.send('You\'re not even in a game, {}'.format(ctx.message.author))
+     except ValueError:
+         await ctx.send('I\'m just going to pretend nothing was wrong there...')
 
 @bot.command()
 async def rep(ctx):
-    try:
-        if ctx.message.author in in_a_game:
-            g_id, u_id = tuple(in_a_game[ctx.message.author])
-            gm = games[g_id][u_id]
-            await reporting(gm, ctx.message.author)
-        else:
-            await ctx.send('You\'re not even in a game, {}'.format(ctx.message.author))
-    except ValueError:
-        await ctx.send('I\'m just going to pretend nothing was wrong there...')
-
+     try:
+         if ctx.message.author in in_a_game:
+             g_id, u_id = tuple(in_a_game[ctx.message.author])
+             gm = games[g_id][u_id]
+             await reporting(gm, ctx.message.author)
+         else:
+             await ctx.send('You\'re not even in a game, {}'.format(ctx.message.author))
+     except ValueError:
+         await ctx.send('I\'m just going to pretend nothing was wrong there...')
 
 @bot.command()
-async def vo(ctx, word):
-    try:
-        word = str(word)
-        if ctx.message.author in in_a_game:
-            g_id, u_id = tuple(in_a_game[ctx.message.author])
-            gm = games[g_id][u_id]
-            await voting(gm, ctx.message.author, word)
-        else:
-            await ctx.send('You\'re not even in a game, {}'.format(ctx.message.author))
-    except ValueError:
-        await ctx.send('I\'m just going to pretend nothing was wrong there...')
-
+async def vo(ctx,word):
+     try:
+         word = str(word)
+         if ctx.message.author in in_a_game:
+             g_id, u_id = tuple(in_a_game[ctx.message.author])
+             gm = games[g_id][u_id]
+             await voting(gm, ctx.message.author,word)
+         else:
+             await ctx.send('You\'re not even in a game, {}'.format(ctx.message.author))
+     except ValueError:
+         await ctx.send('I\'m just going to pretend nothing was wrong there...')
 
 @bot.command()
 async def em(ctx):
@@ -388,13 +377,11 @@ async def em(ctx):
     except ValueError:
         await ctx.send('I\'m just going to pretend nothing was wrong there...')
 
-
 '''
 @bot.event
 async def on_command_error(ctx, error):
     await ctx.send('I\'m just gonna pretend nothing was wrong there...')
 '''
-
 
 # --- Non bot commands ---
 
@@ -411,14 +398,12 @@ async def start_game(gm):
     gm.impostors = random.sample(gm.players, n_impostors)
     gm.has_killed = dict.fromkeys(gm.impostors, True)
     d = {player: gm.player_colours[player] for player in gm.players}
-    gm.emer_dict = dict.fromkeys(gm.players, True)
+    gm.emer_dict = dict.fromkeys(gm.players,True)
     gm.votes['skip'] = 0
-    task_list = ['filter', 'enter_id', 'med_scan', 'ali_eng', 'wires', 'emp', 'upload', 'download', 'power',
-                 'scan_card', 'sample', 'shields', 'steer', 'fuel', 'reac_start']
-    gm.tasking = {player: dict.fromkeys(random.sample(task_list, 6), True) for player in gm.players if
-                  player not in gm.impostors}
+    task_list = ['filter','enter_id','med_scan','ali_eng','wires','emp','upload','download','power','scan_card','sample','shields','steer','fuel','reac_start']
+    gm.tasking = {player : dict.fromkeys(random.sample(task_list,6),True) for player in gm.players if player not in gm.impostors}
     for player in gm.tasking:
-        gm.taskdisp[player] = {k: v for k, v in gm.tasking[player].items()}  # copy of nested dictionary
+        gm.taskdisp[player] = {k : v for k,v in gm.tasking[player].items()} #copy of nested dictionary
     for player in gm.players:
         if player not in gm.impostors:
             if 'download' in gm.tasking[player]:
@@ -426,7 +411,7 @@ async def start_game(gm):
             elif 'upload' in gm.tasking[player]:
                 gm.tasking[player]['download'] = True
             gm.total += sum(gm.tasking[player].values())
-            await task_loc(gm, player)
+            await task_loc(gm,player)
     for i in range(len(gm.players)):
         if gm.players[i] in gm.impostors:
             await gm.players[i].send('You are the `impostor`. Don\'t get caught!')
@@ -472,7 +457,7 @@ async def move_player(gm, pl, tile):
                 gm.player_locations[gm.players.index(pl)] = tile
                 await pl.send(f'You are currently in {skeld_locations[tile]}: Tile {tile}')
 
-                await task_loc(gm, pl)
+                await task_loc(gm,pl)
 
                 if gm.death_place[tile] is not None and gm.players_alive[gm.players.index(pl)] != 0:
                     await pl.send('There is a dead body here! Report using "!rep"')
@@ -487,7 +472,7 @@ async def move_player(gm, pl, tile):
                 same_place = [player for player in same_place if player != pl]
                 if same_place:  # Runs if non-empty
                     d = {player: gm.player_colours[player] for player in same_place}
-                    embed = await make_embed('Players here', 'You also see:', d, is_impostor=pl in gm.impostors, gm=gm)
+                    embed = await make_embed('Players here', 'You also see:', d, is_impostor=pl in gm.impostors,gm=gm)
                     for player in same_place:
                         await player.send(f'{pl} has entered \
     {skeld_locations[tile]}: Tile {tile}')
@@ -495,21 +480,23 @@ async def move_player(gm, pl, tile):
                 else:
                     await pl.send('You\'re the only one here.')
             else:
-                await pl.send('That\'s not allowed Use "!map" to view a map and corresponding tile numbers.')
+                if tile == current_location:
+                    await pl.send("You are already on that tile.")
+                await pl.send('That\'s not allowed See the map in pins.')
         else:
-            await pl.send('You are in a meeting!!')
+            await pl.send('You are in a meeting!')
     except IndexError:
         await pl.send('Sorry, that\'s not allowed.')
     await putback_game(gm, pl)
 
 
-async def venting(gm, pl, tile):
+async def venting(gm,pl,tile):
     current_location = gm.player_locations[gm.players.index(pl)]
     if not gm.meeting_in_progress:
         if pl in gm.impostors:
             #  Check if in a vent-able location
             current_tile = gm.player_locations[gm.players.index(pl)]
-            # Getting into vents
+            #Getting into vents
             if str(tile) == 'default':
                 if current_tile < 50:
                     if current_tile in skeld_vents.keys():
@@ -520,7 +507,7 @@ async def venting(gm, pl, tile):
                         d = {skeld_locations[tilee]: tilee for tilee in allowed_tiles}
                         embed = await make_embed('You can move to', 'Move using !v (Tile Number)', d)
                         await pl.send(embed=embed)
-                        same_place = []
+                        same_place=[]
                         for i in range(len(gm.player_locations)):
                             if gm.player_locations[i] == current_tile and gm.players_alive[i] != 0:
                                 same_place.append(gm.players[i])
@@ -531,7 +518,7 @@ async def venting(gm, pl, tile):
                             for player in same_place:
                                 embed.add_field(name=str(player), value=gm.player_colours[player].title())
                                 # Send message to players as well
-                                await player.send(f'{pl}: {gm.player_colours[pl]} has gotten into a vent \
+                                await player.send(f'{pl} has vented into \
     {skeld_locations[current_tile]}: Tile {current_tile}!')
                             await pl.send(embed=embed)
                     else:
@@ -539,34 +526,34 @@ async def venting(gm, pl, tile):
                 else:
                     await pl.send("You are already in a vent")
             elif str(tile) == 'up':
-                if current_tile > 40:
-                    current_tile -= 50
-                    gm.player_locations[gm.players.index(pl)] = current_tile
-                    same_place = []
-                    await pl.send(f"You are currently in {skeld_locations[current_tile]} \
+                    if current_tile > 40:
+                        current_tile -= 50
+                        gm.player_locations[gm.players.index(pl)] = current_tile
+                        same_place = []
+                        await pl.send(f"You are currently in {skeld_locations[current_tile]} \
     (Tile {current_tile})")
-                    await task_loc(gm, pl)
-                    for i in range(len(gm.player_locations)):
-                        if gm.player_locations[i] == current_tile and gm.players_alive[i] != 0:
-                            same_place.append(gm.players[i])
-                    same_place = [player for player in same_place if player != pl]
-                    if same_place:  # Runs if non-empty
-                        embed = discord.Embed(title='Players here', description='You also see:')
+                        await task_loc(gm,pl)
+                        for i in range(len(gm.player_locations)):
+                            if gm.player_locations[i] == current_tile and gm.players_alive[i] != 0:
+                                same_place.append(gm.players[i])
+                        same_place = [player for player in same_place if player != pl]
+                        if same_place:  # Runs if non-empty
+                            embed = discord.Embed(title='Players here', description='You also see:')
 
-                        for player in same_place:
-                            embed.add_field(name=str(player), value=gm.player_colours[player].title())
-                            # Send message to player as well
-                            await player.send(f'{pl} has vented into\
+                            for player in same_place:
+                                embed.add_field(name=str(player), value=gm.player_colours[player].title())
+                                # Send message to player as well
+                                await player.send(f'{pl} has vented out of \
     {skeld_locations[current_tile]}: Tile {current_tile}!')
-                        await pl.send(embed=embed)
-                    else:
-                        await pl.send("You're the only one here.")
+                            await pl.send(embed=embed)
+                        else:
+                            await pl.send("You're the only one here.")
 
-                    gm.player_locations[gm.players.index(pl)] = current_tile
-                else:
-                    await pl.send('You\'re not even in a vent. Seriously. Think I wouldn\'t notice?')
+                        gm.player_locations[gm.players.index(pl)] = current_tile
+                    else:
+                        await pl.send('You\'re not even in a vent. Seriously. Think I wouldn\'t notice?')
             else:
-                # Moving in vents
+                #Moving in vents
                 if current_tile > 40:
                     current_tile -= 50
                     if tile in skeld_vents[current_tile]:
@@ -600,7 +587,7 @@ async def venting(gm, pl, tile):
     await putback_game(gm, pl)
 
 
-async def killing(gm, pl):
+async def killing(gm,pl):
     if pl in gm.players and not gm.meeting_in_progress:
         if pl in gm.impostors:
             if not gm.has_killed[pl]:
@@ -627,7 +614,7 @@ async def killing(gm, pl):
                         else:
                             gm.death_place[current_tile].append(same_place[0])
                         gm.has_killed[pl] = True
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
                         await putback_game(gm, pl)
                         await asyncio.sleep(30)
                         gm.has_killed[pl] = False
@@ -643,7 +630,7 @@ async def killing(gm, pl):
             await pl.send("Do you think you're an impostor?\nYou're not. Run along now.")
 
 
-async def reporting(gm, pl):
+async def reporting(gm,pl):
     current_tile = gm.player_locations[gm.players.index(pl)]
     if gm.death_place[current_tile] is not None and gm.players_alive[gm.players.index(pl)] == 1:
         gm.player_locations = [14] * len(gm.players_alive)
@@ -654,15 +641,14 @@ async def reporting(gm, pl):
         gm.meeting_in_progress = True
         gm.discuss = True
         await create_channel(pl)
-        d = {str(player): gm.player_colours[player] for player in gm.players if
-             gm.players_alive[gm.players.index(player)] == 1}
+        d = {str(player): gm.player_colours[player] for player in gm.players if gm.players_alive[gm.players.index(player)] == 1}
         embed = await make_embed('List of players', 'Players and their nicknames', d)
         gm.discuss = False
         for player in gm.players:
             await player.send(embed=embed)
             await player.send('Times up! Voting starts now!')
             await player.send('Use !vo (nickname) to vote, or !vo skip to abstain')
-            await end_voting(gm, pl)
+            await end_voting(gm,pl)
 
 
 async def voting(gm, pl, word):
@@ -687,27 +673,25 @@ async def voting(gm, pl, word):
                     await pl.send('Ok.')
                     gm.voted.append(pl)
 
-
-async def emeeting(gm, pl):
+async def emeeting(gm,pl):
     if gm.players_alive[gm.players.index(pl)] and gm.player_locations[gm.players.index(pl)] == 14:
         if gm.can_emergency and gm.emer_dict[pl] and not gm.meeting_in_progress:
             gm.emer_dict[pl] = False
             gm.player_locations = [14] * len(gm.players_alive)
             gm.meeting_in_progress = True
-            await putback_game(gm, pl)
+            await putback_game(gm,pl)
             for player in gm.players:
                 await player.send(f"Emergency meeting called by {pl}\nDiscuss!\nYou got one minute.")
             gm.discuss = True
             await create_channel(pl)
-            d = {str(player): gm.player_colours[player] for player in gm.players if
-                 gm.players_alive[gm.players.index(player)] == 1}
-            embed = await make_embed('List of players', 'Players and their nicknames', d)
+            d = {str(player): gm.player_colours[player] for player in gm.players if gm.players_alive[gm.players.index(player)] == 1}
+            embed =  await make_embed('List of players', 'Players and their nicknames', d)
             gm.discuss = False
             for player in gm.players:
                 await player.send('Times up! Voting starts now!')
                 await player.send('Use !vo (nickname) to vote, or !vo skip to abstain')
                 await player.send(embed=embed)
-            await end_voting(gm, pl)
+            await end_voting(gm,pl)
         else:
             await pl.send("You can't call one right now")
 
@@ -740,18 +724,17 @@ async def create_channel(pl):
     in_game_role = discord.utils.get(guild.roles, name=f"IN GAME {u_id}")
     overwrites = {
         guild.default_role: discord.PermissionOverwrite(read_messages=False),
-        in_game_role: discord.PermissionOverwrite(read_messages=True)
-    }
+        in_game_role : discord.PermissionOverwrite(read_messages=True)
+                  }
     channel = await guild.create_text_channel('Discussion Channel', overwrites=overwrites)
     await channel.send('Welcome')
     await asyncio.sleep(70)
     await channel.delete()
 
-
-async def end_voting(gm, pl):
+async def end_voting(gm,pl):
     await asyncio.sleep(40)
     gm.can_vote = False
-    await putback_game(gm, pl)
+    await putback_game(gm,pl)
     for player in gm.players:
         if gm.players_alive[gm.players.index(player)] == 1 and player not in gm.voted:
             gm.votes['skip'] += 1
@@ -785,11 +768,10 @@ async def end_voting(gm, pl):
             gm.impostors.remove(max_vote_player)
     gm.meeting_in_progress = False
     gm.can_vote = True
-    await putback_game(gm, pl)
-    await check_game_win(gm, pl)
+    await putback_game(gm,pl)
+    await check_game_win(gm,pl)
 
-
-async def check_game_win(gm, pl):
+async def check_game_win(gm,pl):
     global games
     g_id = in_a_game[pl][0]
     u_id = in_a_game[pl][1]
@@ -798,21 +780,20 @@ async def check_game_win(gm, pl):
     tasks_over = False
     for player in gm.players:
         if player in gm.tasking:
-            for k in gm.tasking[player].keys():
-                if gm.tasking[player][k]:
-                    break
-            else:
-                continue
-            break
+                for k in gm.tasking[player].keys():
+                    if gm.tasking[player][k]:
+                        break
+                else:
+                    continue
+                break
     else:
         tasks_over = True
     if gm.impostors and sum(gm.players_alive) <= 2:
-        await imp_victory(gm, role, g_id, u_id)
+        await imp_victory(gm,role,g_id,u_id)
     elif tasks_over or not gm.impostors:
-        await imp_defeat(gm, role, g_id, u_id)
+        await imp_defeat(gm,role,g_id,u_id)
 
-
-async def imp_defeat(gm, role, g_id, u_id):
+async def imp_defeat(gm,role,g_id,u_id):
     for player in gm.players:
         if player not in gm.tasking:
             await player.send('DEFEAT')
@@ -825,8 +806,7 @@ async def imp_defeat(gm, role, g_id, u_id):
     await role.delete()
     del games[g_id][u_id]
 
-
-async def imp_victory(gm, role, g_id, u_id):
+async def imp_victory(gm,role,g_id,u_id):
     for player in gm.players:
         if player not in gm.tasking:
             await player.send('VICTORY')
@@ -838,69 +818,64 @@ async def imp_victory(gm, role, g_id, u_id):
         del in_a_game[player]
     await role.delete()
     del games[g_id][u_id]
-
-
-# ---tasks---
+#---tasks---
 
 @bot.command()
 async def med_scan(ctx):
-    pl = ctx.message.author
-    if pl in in_a_game:
-        try:
-            g_id, u_id = tuple(in_a_game[pl])
-            gm = games[g_id][u_id]
-            if gm.player_locations[gm.players.index(pl)] == 17 and gm.tasking[pl]['med_scan']:
-                gm.temptask['med_scan'].append(pl)
-                await pl.send(f'Starting medical scan...')
-                medical_status_message = await pl.send('Status: 0 percent complete.')
-                medical_status = 0
-                while medical_status < 100:
-                    medical_status += random.randint(1, 6)
-                    if medical_status <= 100:
-                        await medical_status_message.edit(content=f'Status: {medical_status} percent complete.')
-                    else:
-                        await medical_status_message.edit(content=f'Status: 100 percent complete.')
-                    await asyncio.sleep(0.01)
-                else:
-                    await medical_status_message.edit(content=f'Medical scan is complete.')
-                    gm.tasking[pl]['med_scan'] = False
-                    await check_game_win(gm, pl)
-        except KeyError:
-            await pl.send("Sorry, that's not allowed")
-    else:
-        await ctx.send('You\'re not even in a game, {}'.format(pl))
-
+     pl = ctx.message.author
+     if pl in in_a_game:
+         try:
+             g_id, u_id = tuple(in_a_game[pl])
+             gm = games[g_id][u_id]
+             if gm.player_locations[gm.players.index(pl)] == 17 and gm.tasking[pl]['med_scan']:
+                 await pl.send(f'Starting medical scan...')
+                 medical_status_message = await pl.send('Status: 0 percent complete.')
+                 medical_status = 0
+                 while medical_status < 100:
+                     medical_status += random.randint(1, 6)
+                     if medical_status <= 100:
+                         await medical_status_message.edit(content=f'Status: {medical_status} percent complete.')
+                     else:
+                         await medical_status_message.edit(content=f'Status: 100 percent complete.')
+                     await asyncio.sleep(0.01)
+                 else:
+                     await medical_status_message.edit(content=f'Medical scan is complete.')
+                     gm.tasking[pl]['med_scan'] = False
+                     await check_game_win(gm,pl)
+         except KeyError:
+             await pl.send("Sorry, that's not allowed")
+     else:
+         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
 @bot.command()
-async def ali_eng(ctx, *args):
-    pl = ctx.message.author
-    g_id, u_id = tuple(in_a_game[pl])
-    gm = games[g_id][u_id]
-    loc_list = [0, 1, 5, 6]
-    if pl in in_a_game:
-        try:
-            if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['ali_eng'] and not \
-                gm.temptask['ali_eng']:
-                    global antiAlign, alignEng_output, alignEngMessage
-                    gm.temptask['ali_eng'].append(pl)
-                    antiAlign = random.randint(0, 1)
-                    if antiAlign == 0:
-                        slash_up = '\u2196'
-                        slash_down = ''
-                    else:
-                        slash_up = ''
-                        slash_down = '\u2199'
-                    alignEng_output = f'''
+async def ali_eng(ctx,*args):
+     pl = ctx.message.author
+     g_id, u_id = tuple(in_a_game[pl])
+     gm = games[g_id][u_id]
+     loc_list = [0,1,5,6]
+     if pl in in_a_game:
+         try:
+             if not args:
+                 if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['ali_eng'] and not gm.temptask['ali_eng']:
+                     global antiAlign, alignEng_output, alignEngMessage
+                     gm.temptask['ali_eng'].append(pl)
+                     antiAlign = random.randint(0, 1)
+                     if antiAlign == 0:
+                         slash_up = '\u2196'
+                         slash_down = ''
+                     else:
+                         slash_up = ''
+                         slash_down = '\u2199'
+                     alignEng_output = f'''
                                          {slash_up}
                          ------------
                                          {slash_down}
                      '''
-                    alignEngMessage = await pl.send(f'Here is the current engine output:\n{alignEng_output}\
+                     alignEngMessage = await pl.send(f'Here is the current engine output:\n{alignEng_output}\
                      \nType up or down(preceded by !ali_eng) to move the engine output.')
-                else:
-                    await pl.send("Sorry, that's not allowed")
-            else:
+                 else:
+                     await pl.send("Sorry, that's not allowed")
+             else:
                 if pl in gm.temptask['ali_eng'] and gm.player_locations[gm.players.index(pl)] in loc_list:
                     ans = str(args[0])
                     if (ans == 'down' and antiAlign == 0) or (ans == 'up' and antiAlign == 1):
@@ -913,26 +888,24 @@ async def ali_eng(ctx, *args):
                         await alignEngMessage.edit(content=f'Here is the current engine output:\n{alignEng_output}')
                         gm.temptask['ali_eng'].remove(pl)
                         gm.tasking[pl]['ali_eng'] = False
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
                     else:
                         await pl.send('That isnt the right answer! Try again.')
-        except KeyError:
-            await pl.send("Sorry; that's not allowed")
-    else:
-        await ctx.send('You\'re not even in a game, {}'.format(pl))
-
+         except KeyError:
+             await pl.send("Sorry; that's not allowed")
+     else:
+         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
 @bot.command()
-async def emp(ctx, *args):
+async def emp(ctx,*args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
-    loc_list = [14, 15, 10, 11]
+    loc_list = [14,15,10,11]
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['emp'] and not gm.temptask[
-                    'emp']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['emp'] and not gm.temptask['emp']:
                     gm.temptask['emp'].append(pl)
                     await pl.send("Type 'down' (preceded by !emp) to pull the lever down and eject the garbage.")
                 else:
@@ -947,8 +920,7 @@ async def emp(ctx, *args):
                         while emptyChute_status < 100:
                             emptyChute_status += random.randint(1, 6)
                             if emptyChute_status <= 100:
-                                await emptyChute_status_message.edit(
-                                    content=f'Status: {emptyChute_status} percent ejected.')
+                                await emptyChute_status_message.edit(content=f'Status: {emptyChute_status} percent ejected.')
                             else:
                                 await emptyChute_status_message.edit(content=f'Status: 100 percent complete.')
                             await asyncio.sleep(0.01)
@@ -956,7 +928,7 @@ async def emp(ctx, *args):
                             await emptyChute_status_message.edit(content=f'Chute is empty.')
                             gm.temptask['emp'].remove(pl)
                             gm.tasking[pl]['emp'] = False
-                            await check_game_win(gm, pl)
+                            await check_game_win(gm,pl)
                     else:
                         await pl.send('That isnt the right answer! Try again.')
         except KeyError:
@@ -964,18 +936,16 @@ async def emp(ctx, *args):
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
 @bot.command()
-async def wires(ctx, *args):
+async def wires(ctx,*args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
-    loc_list = [8, 9, 10, 11]
+    loc_list = [8,9,10,11]
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['wires'] and not \
-                gm.temptask['wires']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['wires'] and not gm.temptask['wires']:
                     gm.temptask['wires'].append(pl)
                     global wireMatchColors
                     wireMatchColors = []
@@ -1011,19 +981,18 @@ async def wires(ctx, *args):
                         await pl.send('Task completed!')
                         gm.temptask['wires'].remove(pl)
                         gm.tasking[pl]['wires'] = False
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
         except KeyError:
             await pl.send("Sorry, that's not allowed")
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
-
 
 @bot.command()
 async def download(ctx):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
-    loc_list = [25, 27]
+    loc_list = [25,27]
     if pl in in_a_game:
         try:
             if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['download']:
@@ -1040,19 +1009,18 @@ async def download(ctx):
                 else:
                     await download_status_message.edit(content=f'Download is complete.')
                     gm.tasking[pl]['download'] = False
-                    await check_game_win(gm, pl)
+                    await check_game_win(gm,pl)
         except KeyError:
             await pl.send("Sorry; that's not allowed")
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
-
 
 @bot.command()
 async def upload(ctx):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
-    loc_list = [13, 23, 24]
+    loc_list = [13,23,24]
     if pl in in_a_game:
         try:
             if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['upload']:
@@ -1070,7 +1038,7 @@ async def upload(ctx):
                     else:
                         await upload_status_message.edit(content=f'Upload is complete.')
                         gm.tasking[pl]['upload'] = False
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
                 else:
                     await pl.send("You have to download first!")
         except KeyError:
@@ -1078,18 +1046,16 @@ async def upload(ctx):
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
 @bot.command()
-async def power(ctx, *args):
+async def power(ctx,*args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
-    loc_list = [27, 4]
+    loc_list = [27,4]
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['power'] and not \
-                gm.temptask['power']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['power'] and not gm.temptask['power']:
                     gm.temptask['power'].append(pl)
                     global power_switch, switches, messes
                     switches = ['cafetaria', 'admin',
@@ -1123,7 +1089,7 @@ async def power(ctx, *args):
                         await pl.send('Power successfully diverted.')
                         gm.temptask['power'].remove(pl)
                         gm.tasking[pl]['power'] = False
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
                     else:
                         await pl.send('That isnt the right answer! Try again.')
         except KeyError:
@@ -1131,9 +1097,8 @@ async def power(ctx, *args):
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
 @bot.command()
-async def enter_id(ctx, *args):
+async def enter_id(ctx,*args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
@@ -1141,8 +1106,7 @@ async def enter_id(ctx, *args):
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['enter_id'] and not \
-                gm.temptask['enter_id']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['enter_id'] and not gm.temptask['enter_id']:
                     gm.temptask['enter_id'].append(pl)
                     global code
                     code = random.randint(20000, 80000)
@@ -1163,7 +1127,7 @@ async def enter_id(ctx, *args):
                         gm.temptask['enter_id'].remove(pl)
                         code = ''
                         await pl.send('Id accepted!')
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
                     else:
                         await pl.send('That isnt the right answer! Try again.')
         except KeyError:
@@ -1171,9 +1135,8 @@ async def enter_id(ctx, *args):
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
 @bot.command()
-async def reac_start(ctx, *args):
+async def reac_start(ctx,*args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
@@ -1181,8 +1144,7 @@ async def reac_start(ctx, *args):
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['reac_start'] and not \
-                gm.temptask['reac_start']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['reac_start'] and not gm.temptask['reac_start']:
                     gm.temptask['reac_start'].append(pl)
                     global reactor_nums, current_num_mess, current_num
                     reactor_nums = [random.randint(1, 6) for _ in range(5)]
@@ -1218,7 +1180,7 @@ async def reac_start(ctx, *args):
                         reactor_nums, current_num = [], 0
                         gm.tasking[pl]['reac_start'] = False
                         gm.temptask['reac_start'].remove(pl)
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
                     else:
                         await pl.send('That was the wrong code! Try again.')
         except KeyError:
@@ -1226,18 +1188,16 @@ async def reac_start(ctx, *args):
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
 @bot.command()
 async def fuel(ctx, *args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
-    loc_list = [0, 1, 5, 6]
+    loc_list = [0,1,5,6]
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['fuel'] and not gm.temptask[
-                    'fuel']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['fuel'] and not gm.temptask['fuel']:
                     gm.temptask['fuel'].append(pl)
                     global start, fuelFill_status, fuelFill_status_message, mess
                     start = await pl.send(f'Starting fuel filling...')
@@ -1245,8 +1205,8 @@ async def fuel(ctx, *args):
                     fuelFill_status = 0
                     for i in range(5):
                         fuelFill_status += 1
-                        mess = fuelFill_status_message.content + ' <:yellow_square:771729639223066654> ' \
-                            if i != 0 else ' <:yellow_square:771729639223066654> '
+                        mess = fuelFill_status_message.content + ' <:yellow_square:771729639223066654> '\
+                         if i != 0 else ' <:yellow_square:771729639223066654> '
                         await fuelFill_status_message.edit(content=f'{mess}')
                         await asyncio.sleep(1.75)
                     else:
@@ -1273,7 +1233,7 @@ async def fuel(ctx, *args):
                             gm.tasking[pl]['fuel'] = False
                             gm.temptask['fuel'].remove(pl)
                             fuelFill_status = 0
-                            await check_game_win(gm, pl)
+                            await check_game_win(gm,pl)
                     else:
                         await pl.send('That isnt the right answer! Try again.')
         except KeyError:
@@ -1281,18 +1241,16 @@ async def fuel(ctx, *args):
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
 @bot.command()
-async def steer(ctx, *args):
+async def steer(ctx,*args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
-    loc_list = [23, 24]
+    loc_list = [23,24]
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['steer'] and not \
-                gm.temptask['steer']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['steer'] and not gm.temptask['steer']:
                     gm.temptask['steer'].append(pl)
                     global aim_display, needed_aim
                     aims = ['right', 'left', 'up', 'down', 'center']
@@ -1353,7 +1311,7 @@ async def steer(ctx, *args):
                         await pl.send('Steering is now perfectly aligned.')
                         gm.tasking[pl]['steer'] = False
                         gm.temptask['steer'].remove(pl)
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
                     else:
                         await pl.send('That is the wrong direction, try again.')
         except KeyError:
@@ -1361,9 +1319,8 @@ async def steer(ctx, *args):
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
 @bot.command()
-async def shields(ctx, *args):
+async def shields(ctx,*args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
@@ -1371,8 +1328,7 @@ async def shields(ctx, *args):
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['shields'] and not \
-                gm.temptask['shields']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['shields'] and not gm.temptask['shields']:
                     gm.temptask['shields'].append(pl)
                     global red_square, yellow_square, tiles, tile_messages
                     red_square, yellow_square = '\U0001F7E5', '\U0001F7E8'
@@ -1419,7 +1375,7 @@ async def shields(ctx, *args):
                             await pl.send('Shields fixed!')
                         gm.tasking[pl]['shields'] = False
                         gm.temptask['shields'].remove(pl)
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
                     else:
                         await pl.send('That isnt the right answer! Try again.')
         except KeyError:
@@ -1427,9 +1383,8 @@ async def shields(ctx, *args):
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
 @bot.command()
-async def sample(ctx, *args):
+async def sample(ctx,*args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
@@ -1437,8 +1392,7 @@ async def sample(ctx, *args):
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['sample'] and not \
-                gm.temptask['sample']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['sample'] and not gm.temptask['sample']:
                     gm.temptask['sample'].append(pl)
                     global white_square, blue_square, red_square, samples, display_message, heading
                     white_square, blue_square, red_square = '\U00002B1C', '\U0001F7E6', '\U0001F7E5'
@@ -1475,11 +1429,11 @@ async def sample(ctx, *args):
                         display_message = await pl.send(content="Pick the incorrect sample [in Medbay]\
                          (Example: 'sample 1' for 1st sample)")
                     elif its_int and ans == n:
-                        await samples.edit(content=blue_square * 5)
+                        await samples.edit(content=blue_square*5)
                         await display_message.edit(content="Inspect samples task finished!")
                         gm.tasking[pl]['sample'] = False
                         gm.temptask['sample'].remove(pl)
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
                     elif its_int and not ans == n:
                         await pl.send("Wrong sample! Try again")
         except KeyError:
@@ -1487,23 +1441,21 @@ async def sample(ctx, *args):
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
 @bot.command()
 async def scan_card(ctx, *args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
-    loc_list = [4, 19]
+    loc_list = [4,19]
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['scan_card'] and not \
-                gm.temptask['scan_card']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['scan_card'] and not gm.temptask['scan_card']:
                     gm.temptask['scan_card'].append(pl)
                     global can_scan, display, instruction, blue_square, orange_square, card, tick_mark, forward_arrow
                     can_scan = False
                     blue_square, orange_square, card, tick_mark, forward_arrow = '\U0001F7E6', '\U0001F7E7', '💳', '✅', '▶'
-                    display = await pl.send(f'{forward_arrow}{blue_square * 5}')
+                    display = await pl.send(f'{forward_arrow}{blue_square*5}')
                     instruction = await pl.send("Type 'card' to bring your card")
                 else:
                     await pl.send("Sorry, that's not allowed")
@@ -1512,7 +1464,7 @@ async def scan_card(ctx, *args):
                     ans = str(args[0])
                     if not can_scan:
                         if ans == 'card':
-                            await display.edit(content=f'{card}{blue_square * 5}')
+                            await display.edit(content=f'{card}{blue_square*5}')
                             await instruction.edit(content="Type 'scan' to scan your card")
                             can_scan = True
                         elif ans == 'scan':
@@ -1532,120 +1484,117 @@ async def scan_card(ctx, *args):
                             await instruction.edit(content=tick_mark)
                             gm.tasking[pl]['scan_card'] = False
                             gm.temptask['scan_card'].remove(pl)
-                            await check_game_win(gm, pl)
+                            await check_game_win(gm,pl)
         except KeyError:
             await pl.send("Sorry; that's not allowed")
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
 @bot.command()
-async def filter(ctx, *args):
+async def filter(ctx,*args):
     pl = ctx.message.author
     g_id, u_id = tuple(in_a_game[pl])
     gm = games[g_id][u_id]
-    loc_list = [21, 3]
+    loc_list = [21,3]
     if pl in in_a_game:
         try:
             if not args:
-                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['filter'] and not \
-                gm.temptask['filter']:
+                if gm.player_locations[gm.players.index(pl)] in loc_list and gm.tasking[pl]['filter'] and not gm.temptask['filter']:
                     gm.temptask['filter'].append(pl)
                     global leaf_messages, leaf, leaves
                     leaves = [True if random.randint(0, 1) == 1 else False for _ in range(3)]
-                    leaf_messages = [None] * 3
+                    leaf_messages = [None]*3
                     leaf = '<:fallen_leaf:786165147198685194>'
                     await pl.send('Type the number(s) (preceded by !filter) against which you see leaves.\
                     \n For example, !filter 12')
                     for i in range(3):
-                        leaf_messages[i] = await pl.send(f"{i + 1} {leaf if leaves[i] else ' '}")
+                        leaf_messages[i] = await pl.send(f"{i+1} {leaf if leaves[i] else ' '}")
                 else:
                     await pl.send("Sorry, that's not allowed")
             else:
                 if pl in gm.temptask['filter'] and gm.player_locations[gm.players.index(pl)] in loc_list:
                     ans = str(args[0])
                     for i in ans:
-                        if leaves[int(i) - 1]:
-                            leaves[int(i) - 1] = False
+                        if leaves[int(i)-1]:
+                            leaves[int(i)-1] = False
                             for j in range(3):
-                                await leaf_messages[j].edit(content=f"{j + 1} {leaf if leaves[j] else ' '}")
+                                await leaf_messages[j].edit(content=f"{j+1} {leaf if leaves[j] else ' '}")
                         else:
                             await pl.send('That isnt the right answer! Try again.')
                             break
                     else:
-                        leaves = [None] * 3
+                        leaves = [None]*3
                         await pl.send('Filters are clean!')
                         gm.tasking[pl]['filter'] = False
                         gm.temptask['filter'].remove(pl)
-                        await check_game_win(gm, pl)
+                        await check_game_win(gm,pl)
         except KeyError:
             await pl.send("Sorry, that's not allowed")
     else:
         await ctx.send('You\'re not even in a game, {}'.format(pl))
 
-
-async def task_loc(gm, pl):
+async def task_loc(gm,pl):
     current_location = gm.player_locations[gm.players.index(pl)]
     try:
-        if current_location in [0, 1, 5, 6]:  # engines
+        if current_location in [0,1,5,6]: #engines
             if gm.tasking[pl]['ali_eng'] == True:
                 await pl.send("You can do the Align Engines task. Type !ali_eng")
             if gm.tasking[pl]['fuel'] == True:
                 await pl.send("You can do the Fuel Fill task. Type !fuel")
-        elif current_location in [14, 15]:  # cafe
+        elif current_location in [14,15]: #cafe
             if gm.tasking[pl]['emp'] == True:
                 await pl.send("You can do the Empty Chute task. Type !emp")
-        elif current_location in [8, 9]:  # electrical
+        elif current_location in [8,9]: #electrical
             if gm.tasking[pl]['wires'] == True:
                 await pl.send("You can do the Fix Wires task. Type !wires")
-        elif current_location in [25]:  # shields
+        elif current_location in [25]: #shields
             if gm.tasking[pl]['download'] == True:
                 await pl.send("You can do the Download Data task. Type !download")
             if gm.tasking[pl]['shields'] == True:
                 await pl.send("You can do the Shields Primer task. Type !shields")
-        elif current_location in [13]:  # admin
+        elif current_location in [13]: #admin
             if not gm.tasking[pl]['download']:
                 if gm.tasking[pl]['upload'] == True:
                     await pl.send("You can do the Upload Data task. Type !upload")
             if gm.tasking[pl]['enter_id'] == True:
                 await pl.send("You can do the Enter ID task. Type !enter_id")
-        elif current_location in [27]:  # communications
+        elif current_location in [27]: #communications
             if gm.tasking[pl]['power'] == True:
                 await pl.send("You can do the Divert Power task. Type !power")
             if gm.tasking[pl]['download'] == True:
                 await pl.send("You can do the Download Data task. Type !download")
-        elif current_location in [19]:  # weapons
+        elif current_location in [19]: #weapons
             if gm.tasking[pl]['enter_id'] == True:
                 await pl.send("You can do the Enter ID task. Type !enter_id")
             if gm.tasking[pl]['scan_card'] == True:
                 await pl.send("You can do the Scan Card task. Type !scan_card")
-        elif current_location in [3]:  # reactor
+        elif current_location in [3]: #reactor
             if gm.tasking[pl]['reac_start'] == True:
                 await pl.send("You can do the Start Reactor task. Type !reac_start")
             if gm.tasking[pl]['filter'] == True:
                 await pl.send("You can do the Clean Filter task. Type !filter")
-        elif current_location in [10, 11]:  # storage
+        elif current_location in [10,11]: # storage
             if gm.tasking[pl]['emp'] == True:
                 await pl.send("You can do the Empty Chute task. Type !emp")
             if gm.tasking[pl]['wires'] == True:
                 await pl.send("You can do the Fix Wires task. Type !wires")
-        elif current_location in [23, 24]:  # navigation
+        elif current_location in [23,24]: # navigation
             if gm.tasking[pl]['steer'] == True:
                 await pl.send("You can do the Stabilize Steering task. Type !steer")
             if not gm.tasking[pl]['download']:
                 if gm.tasking[pl]['upload'] == True:
                     await pl.send("You can do the Upload Data task. Type !upload")
-        elif current_location in [17]:  # medbay
+        elif current_location in [17]: #medbay
             if gm.tasking[pl]['med_scan'] == True:
                 await pl.send("You can do the Medical Scan task. Type !med_scan")
             if gm.tasking[pl]['sample'] == True:
                 await pl.send("You can do the Inspect Samples task. Type !sample")
-        elif current_location in [4]:  # security
+        elif current_location in [4]: #security
             if gm.tasking[pl]['scan_card'] == True:
                 await pl.send("You can do the Scan Card task. Type !scan_card")
             if gm.tasking[pl]['power'] == True:
                 await pl.send("You can do the Divert Power task. Type !power")
-        elif current_location in [21]:  # O2
+        elif current_location in [21]: #O2
             if gm.tasking[pl]['filter'] == True:
                 await pl.send("You can do the Clean Filter task. Type !filter")
     except KeyError:
