@@ -1373,8 +1373,8 @@ async def shields(ctx,*args):
                                     shields_done = False
                         if shields_done:
                             await pl.send('Shields fixed!')
-                        gm.tasking[pl]['shields'] = False
-                        gm.temptask['shields'].remove(pl)
+                            gm.tasking[pl]['shields'] = False
+                            gm.temptask['shields'].remove(pl)
                         await check_game_win(gm,pl)
                     else:
                         await pl.send('That isnt the right answer! Try again.')
